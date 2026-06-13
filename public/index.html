@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beluco — Працюй з нами</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#2a7a38;--gd:#1b5226;--gl:#3d9e4e;--gs:#e6f4e8;
+  --cream:#f7f5f0;--white:#fff;--char:#181818;--mid:#5a5a5a;
+  --border:#e2dfd8;--r:14px;--r-sm:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--char);line-height:1.6}
+
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(247,245,240,0.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  height:66px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.logo-box{background:var(--g);color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;font-size:17px;letter-spacing:2.5px;padding:7px 15px;border-radius:var(--r-sm)}
+.logo-sub{font-size:9px;letter-spacing:1.5px;color:var(--mid);text-transform:uppercase;margin-top:2px}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nav-links a{padding:8px 14px;font-size:14px;font-weight:500;color:var(--char);text-decoration:none;border-radius:var(--r-sm);transition:background .15s}
+.nav-links a:hover,.nav-links a.active{background:var(--gs);color:var(--gd)}
+.btn-primary{background:var(--g);color:#fff;border:none;padding:10px 22px;font-size:14px;font-weight:600;border-radius:var(--r-sm);cursor:pointer;text-decoration:none;transition:background .15s}
+.btn-primary:hover{background:var(--gd)}
+.burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.burger span{display:block;width:22px;height:2px;background:var(--char);border-radius:2px;transition:all .2s}
+.burger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-menu{display:none;position:fixed;top:66px;left:0;right:0;z-index:190;background:var(--white);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:12px 16px;font-size:15px;font-weight:500;color:var(--char);text-decoration:none;border-radius:var(--r-sm)}
+.mobile-menu a:hover{background:var(--gs)}
+
+.page{display:none;margin-top:66px;min-height:calc(100vh - 66px)}
+.page.active{display:block}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 66px);overflow:hidden}
+.hero-left{background:var(--gd);padding:80px 56px;display:flex;flex-direction:column;justify-content:center}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:7px 16px;border-radius:50px;margin-bottom:32px;width:fit-content}
+.hero-tag::before{content:'';width:7px;height:7px;background:#7ed99a;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(34px,3.8vw,62px);color:#fff;line-height:1.07;margin-bottom:24px}
+.hero-title em{color:#7ed99a;font-style:normal}
+.hero-desc{color:rgba(255,255,255,.72);font-size:16px;max-width:400px;margin-bottom:40px;line-height:1.75}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-white{background:#fff;color:var(--gd);font-weight:700;font-size:15px;padding:14px 32px;border-radius:var(--r-sm);text-decoration:none;transition:transform .2s,box-shadow .2s;display:inline-block}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.2)}
+.btn-outline{background:transparent;color:#fff;font-weight:600;font-size:15px;padding:14px 28px;border-radius:var(--r-sm);text-decoration:none;border:2px solid rgba(255,255,255,.35);transition:border-color .2s;display:inline-block}
+.btn-outline:hover{border-color:#fff}
+.hero-right{position:relative;overflow:hidden;background:#2a5530}
+.hero-right img{width:100%;height:100%;object-fit:cover;filter:brightness(.75)}
+.hero-stats{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(27,82,38,.95) 0%,transparent 100%);padding:32px 32px 28px;display:flex}
+.stat{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.15)}
+.stat:last-child{border-right:none}
+.stat-n{font-family:'Montserrat',sans-serif;font-weight:900;font-size:30px;color:#7ed99a}
+.stat-l{font-size:12px;color:rgba(255,255,255,.6);margin-top:2px}
+
+.sec{padding:88px 24px;max-width:1120px;margin:0 auto}
+.sec-label{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--g);margin-bottom:12px}
+.sec-title{font-family:'Montserrat',sans-serif;font-weight:800;font-size:clamp(26px,3vw,42px);line-height:1.15;margin-bottom:52px}
+
+/* CARDS */
+.jobs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.job-card{background:var(--white);border-radius:var(--r);padding:32px 28px;border:1.5px solid var(--border);transition:border-color .2s,transform .2s,box-shadow .2s;display:flex;flex-direction:column;gap:10px}
+.job-card:hover{border-color:var(--g);transform:translateY(-3px);box-shadow:0 12px 32px rgba(42,122,56,.1)}
+.job-emoji{font-size:30px}
+.job-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px}
+.job-desc{font-size:14px;color:var(--mid);line-height:1.65;flex:1}
+.job-badge{display:inline-block;background:var(--gs);color:var(--gd);font-size:12px;font-weight:600;padding:5px 13px;border-radius:50px;width:fit-content}
+
+.why-bg{background:var(--gd)}
+.why-bg .sec-label{color:#7ed99a}
+.why-bg .sec-title{color:#fff}
+.perks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:28px}
+.perk{border-radius:var(--r);background:rgba(255,255,255,.07);padding:28px 24px}
+.perk-icon{font-size:26px;margin-bottom:12px}
+.perk-title{font-weight:700;font-size:15px;color:#fff;margin-bottom:8px}
+.perk-text{font-size:14px;color:rgba(255,255,255,.6);line-height:1.65}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.news-card{background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;transition:transform .2s,box-shadow .2s}
+.news-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.news-img{width:100%;height:200px;object-fit:cover;display:block}
+.news-img-placeholder{width:100%;height:200px;background:linear-gradient(135deg,var(--gs),#c8e6cc);display:flex;align-items:center;justify-content:center;font-size:52px}
+.news-body{padding:22px}
+.news-cat{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--g);margin-bottom:8px;display:block}
+.contest-cat{color:#b8860b;background:#fff8e1;padding:4px 12px;border-radius:50px;display:inline-block}
+.news-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px;line-height:1.35}
+.news-text{font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:12px}
+.news-date{font-size:12px;color:#aaa}
+
+.contact-wrap{max-width:640px;margin:0 auto;text-align:center}
+.contact-card{background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);padding:36px 32px;text-align:left;margin-top:40px}
+.contact-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border)}
+.contact-row:last-child{border-bottom:none;padding-bottom:0}
+.c-icon{width:44px;height:44px;background:var(--gs);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.c-label{font-size:11px;color:var(--mid);margin-bottom:2px}
+.c-val{font-weight:600;font-size:15px}
+.c-val a{color:var(--gd);text-decoration:none}
+.apply-btn{display:block;background:var(--g);color:#fff;text-align:center;padding:17px;font-weight:700;font-size:15px;border-radius:var(--r-sm);text-decoration:none;margin-top:28px;transition:background .2s}
+.apply-btn:hover{background:var(--gd)}
+
+.empty{text-align:center;padding:64px 24px;color:var(--mid);font-size:15px}
+.empty-icon{font-size:48px;margin-bottom:16px}
+
+footer{background:var(--char);color:rgba(255,255,255,.4);text-align:center;padding:28px 24px;font-size:13px}
+footer strong{color:rgba(255,255,255,.75)}
+
+@media(max-width:900px){
+  .nav-links{display:none}
+  .burger{display:flex}
+  .hero{grid-template-columns:1fr}
+  .hero-right{height:260px}
+  .hero-left{padding:52px 28px}
+  .hero-stats{padding:20px}
+  .stat-n{font-size:22px}
+  .sec{padding:64px 20px}
+}
+@media(max-width:480px){
+  nav{padding:0 16px}
+  .hero-left{padding:40px 20px}
+  .contact-card{padding:24px 16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div>
+    <div class="logo-box">BELUCO</div>
+    <div class="logo-sub">We go for quality</div>
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active" onclick="showPage('home',this);return false">Головна</a>
+    <a href="#" onclick="showPage('vacancies',this);return false">Вакансії</a>
+    <a href="#" onclick="showPage('news',this);return false">Новини</a>
+    <a href="#" onclick="showPage('contests',this);return false">Конкурси</a>
+    <a href="#" onclick="showPage('contact',this);return false">Контакти</a>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <a href="#" class="btn-primary" onclick="showPage('contact',null);return false">Надіслати резюме</a>
+    <button class="burger" id="burger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="showPage('home',null);closeMobile();return false">Головна</a>
+  <a href="#" onclick="showPage('vacancies',null);closeMobile();return false">Вакансії</a>
+  <a href="#" onclick="showPage('news',null);closeMobile();return false">Новини</a>
+  <a href="#" onclick="showPage('contests',null);closeMobile();return false">Конкурси</a>
+  <a href="#" onclick="showPage('contact',null);closeMobile();return false">Контакти</a>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-left">
+      <span class="hero-tag">Відкриті вакансії 2025</span>
+      <h1 class="hero-title">Будуй кар'єру<br>з <em>лідером</em><br>у меблях</h1>
+      <p class="hero-desc">Beluco — українське виробництво м'яких меблів. Шукаємо майстрів своєї справи у наш дружній колектив.</p>
+      <div class="hero-btns">
+        <a href="#" class="btn-white" onclick="showPage('vacancies',null);return false">Переглянути вакансії</a>
+        <a href="#" class="btn-outline" onclick="showPage('contact',null);return false">Зв'язатись</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1200&q=80" alt="Виробництво">
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-n" id="stat-years">10+</div><div class="stat-l">Років на ринку</div></div>
+        <div class="stat"><div class="stat-n" id="stat-staff">100+</div><div class="stat-l">Працівників</div></div>
+        <div class="stat"><div class="stat-n">🇺🇦</div><div class="stat-l">Зроблено в Україні</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="why-bg">
+    <div class="sec">
+      <div class="sec-label">Чому Beluco</div>
+      <h2 class="sec-title" style="color:#fff">Що ми пропонуємо</h2>
+      <div class="perks-grid">
+        <div class="perk"><div class="perk-icon">💰</div><div class="perk-title">Гідна зарплата</div><div class="perk-text">Своєчасні виплати, прозора система нарахування.</div></div>
+        <div class="perk"><div class="perk-icon">📋</div><div class="perk-title">Офіційне оформлення</div><div class="perk-text">Повністю офіційне працевлаштування з першого дня.</div></div>
+        <div class="perk"><div class="perk-icon">🏭</div><div class="perk-title">Сучасне виробництво</div><div class="perk-text">Зручне робоче місце, якісне обладнання.</div></div>
+        <div class="perk"><div class="perk-icon">🤝</div><div class="perk-title">Дружній колектив</div><div class="perk-text">Команда понад 100 людей з корпоративними заходами.</div></div>
+        <div class="perk"><div class="perk-icon">📈</div><div class="perk-title">Зростання</div><div class="perk-text">Можливість кар'єрного зростання всередині компанії.</div></div>
+        <div class="perk"><div class="perk-icon">🚌</div><div class="perk-title">Зручне розташування</div><div class="perk-text">Гарна транспортна розв'язка до підприємства.</div></div>
+      </div>
+    </div>
+  </div>
+  <footer><strong>BELUCO</strong> — We go for quality &nbsp;|&nbsp; © 2025 ТОВ Белуко</footer>
+</div>
+
+<!-- VACANCIES -->
+<div class="page" id="page-vacancies">
+  <div class="sec">
+    <div class="sec-label">Відкриті позиції</div>
+    <h2 class="sec-title">Кого ми шукаємо</h2>
+    <div class="jobs-grid" id="jobs-list"><div class="empty"><div class="empty-icon">⏳</div>Завантаження...</div></div>
+  </div>
+  <footer><strong>BELUCO</strong> — We go for quality &nbsp;|&nbsp; © 2025 ТОВ Белуко</footer>
+</div>
+
+<!-- NEWS -->
+<div class="page" id="page-news">
+  <div class="sec">
+    <div class="sec-label">Компанія</div>
+    <h2 class="sec-title">Новини</h2>
+    <div class="cards-grid" id="news-list"><div class="empty"><div class="empty-icon">⏳</div>Завантаження...</div></div>
+  </div>
+  <footer><strong>BELUCO</strong> — We go for quality &nbsp;|&nbsp; © 2025 ТОВ Белуко</footer>
+</div>
+
+<!-- CONTESTS -->
+<div class="page" id="page-contests">
+  <div class="sec">
+    <div class="sec-label">Активності</div>
+    <h2 class="sec-title">Конкурси</h2>
+    <div class="cards-grid" id="contests-list"><div class="empty"><div class="empty-icon">⏳</div>Завантаження...</div></div>
+  </div>
+  <footer><strong>BELUCO</strong> — We go for quality &nbsp;|&nbsp; © 2025 ТОВ Белуко</footer>
+</div>
+
+<!-- CONTACT -->
+<div class="page" id="page-contact">
+  <div class="sec">
+    <div class="contact-wrap">
+      <div class="sec-label" style="text-align:center">Зв'язатись</div>
+      <h2 class="sec-title" style="text-align:center;margin-bottom:8px">Готові приєднатись?</h2>
+      <p style="color:var(--mid);text-align:center">Надішліть резюме або зателефонуйте.</p>
+      <div class="contact-card">
+        <div class="contact-row"><div class="c-icon">📞</div><div><div class="c-label">Телефон</div><div class="c-val"><a id="c-phone-a" href="#"><span id="c-phone">—</span></a></div></div></div>
+        <div class="contact-row"><div class="c-icon">✉️</div><div><div class="c-label">Email</div><div class="c-val"><a id="c-email-a" href="#"><span id="c-email">—</span></a></div></div></div>
+        <div class="contact-row"><div class="c-icon">📍</div><div><div class="c-label">Адреса</div><div class="c-val"><span id="c-addr">—</span></div></div></div>
+        <div class="contact-row"><div class="c-icon">🕐</div><div><div class="c-label">Години прийому</div><div class="c-val"><span id="c-hours">—</span></div></div></div>
+      </div>
+      <a href="https://www.facebook.com/share/1CgWvnD2i9/" target="_blank" class="apply-btn">Написати нам у Facebook →</a>
+    </div>
+  </div>
+  <footer><strong>BELUCO</strong> — We go for quality &nbsp;|&nbsp; © 2025 ТОВ Белуко</footer>
+</div>
+
+<script>
+// Замінити на реальний URL після деплою на HuggingFace
+const API = window.location.hostname === 'localhost'
+  ? 'http://localhost:7860'
+  : ''; // порожньо = той самий домен
+
+function api(path) {
+  return fetch(API + path).then(r => r.json());
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  const p = d.split('-');
+  return p.length === 3 ? p[2]+'.'+p[1]+'.'+p[0] : d;
+}
+
+// ── LOAD DATA ──
+async function loadAll() {
+  try {
+    const [vacancies, news, contests, settings] = await Promise.all([
+      api('/api/vacancies'),
+      api('/api/posts?type=news'),
+      api('/api/posts?type=contest'),
+      api('/api/settings'),
+    ]);
+    renderVacancies(vacancies);
+    renderNews(news);
+    renderContests(contests);
+    renderSettings(settings);
+  } catch(e) {
+    console.warn('API недоступне, використовуємо демо-дані');
+    renderVacancies(DEMO.vacancies);
+    renderNews(DEMO.news);
+    renderContests(DEMO.contests);
+    renderSettings(DEMO.settings);
+  }
+}
+
+function renderVacancies(list) {
+  const el = document.getElementById('jobs-list');
+  if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>Вакансії незабаром з\'являться</div>'; return; }
+  el.innerHTML = list.map(v => `
+    <div class="job-card">
+      <div class="job-emoji">${v.emoji}</div>
+      <div class="job-title">${v.title}</div>
+      <div class="job-desc">${v.desc}</div>
+      <span class="job-badge">Повна зайнятість</span>
+    </div>`).join('');
+}
+
+function renderNews(list) {
+  const el = document.getElementById('news-list');
+  if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📰</div>Новин поки немає</div>'; return; }
+  el.innerHTML = list.map(n => `
+    <div class="news-card">
+      ${n.image
+        ? `<img class="news-img" src="${n.image}" alt="${n.title}">`
+        : `<div class="news-img-placeholder">📰</div>`}
+      <div class="news-body">
+        <span class="news-cat">Новини</span>
+        <div class="news-title">${n.title}</div>
+        <div class="news-text">${n.text}</div>
+        <div class="news-date">${fmtDate(n.date)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderContests(list) {
+  const el = document.getElementById('contests-list');
+  if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div>Конкурсів поки немає</div>'; return; }
+  el.innerHTML = list.map(c => `
+    <div class="news-card">
+      ${c.image
+        ? `<img class="news-img" src="${c.image}" alt="${c.title}">`
+        : `<div class="news-img-placeholder">🏆</div>`}
+      <div class="news-body">
+        <span class="news-cat contest-cat">🏆 Конкурс</span>
+        <div class="news-title">${c.title}</div>
+        <div class="news-text">${c.text}</div>
+        ${c.date ? `<div class="news-date">До: ${fmtDate(c.date)}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function renderSettings(s) {
+  document.getElementById('stat-years').textContent = s.years || '10+';
+  document.getElementById('stat-staff').textContent = s.staff || '100+';
+  const phone = s.phone || '—';
+  const email = s.email || '—';
+  document.getElementById('c-phone').textContent = phone;
+  document.getElementById('c-phone-a').href = 'tel:' + phone.replace(/\D/g,'');
+  document.getElementById('c-email').textContent = email;
+  document.getElementById('c-email-a').href = 'mailto:' + email;
+  document.getElementById('c-addr').textContent = s.address || '—';
+  document.getElementById('c-hours').textContent = s.hours || '—';
+}
+
+// ── NAV ──
+function showPage(name, link) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  if (link) link.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function toggleMobile() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.getElementById('burger').classList.toggle('open');
+}
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('burger').classList.remove('open');
+}
+
+// ── DEMO FALLBACK ──
+const DEMO = {
+  vacancies: [
+    {emoji:'🧵',title:'Швачка / Швець',desc:'Пошиття оббивки та чохлів. Досвід на промисловій швейній машині — перевага.'},
+    {emoji:'🪵',title:'Столяр',desc:'Виготовлення каркасів і дерев\'яних конструкцій.'},
+    {emoji:'🖐️',title:'Поклейщик',desc:'Приклеювання поролону та синтепону до каркасів.'},
+    {emoji:'🔧',title:'Монтажник меблів',desc:'Збірка готових виробів, встановлення фурнітури.'},
+    {emoji:'📦',title:'Комірник',desc:'Прийом, зберігання та видача матеріалів.'},
+    {emoji:'✂️',title:'Розкрійник тканини',desc:'Розкрій оббивних тканин за лекалами.'},
+  ],
+  news: [{title:'День вишиванки в Beluco',text:'Вся команда зібралась у традиційному вбранні.',date:'2025-05-21',image:''}],
+  contests: [{title:'Кращий майстер місяця',text:'Щомісяця обираємо найкращого працівника цеху.',date:'2025-06-30',image:''}],
+  settings: {phone:'+38 (000) 000-00-00',email:'hr@beluco.ua',address:'Вкажіть адресу',hours:'Пн–Пт 09:00–17:00',years:'10+',staff:'100+'}
+};
+
+loadAll();
+</script>
+</body>
+</html>
