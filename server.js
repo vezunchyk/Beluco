@@ -8,7 +8,8 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 7860;
+// Стало:
+const PORT = process.env.PORT || 7860;
 
 // ── CONFIG (замінити перед деплоєм) ──
 const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://USER:PASS@cluster.mongodb.net/beluco';
