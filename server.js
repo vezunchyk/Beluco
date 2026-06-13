@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
@@ -14,8 +13,7 @@ const PORT = process.env.PORT || 7860;
 // ── CONFIG (замінити перед деплоєм) ──
 const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://USER:PASS@cluster.mongodb.net/beluco';
 const JWT_SECRET = process.env.JWT_SECRET || 'beluco_secret_key_change_me';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || bcrypt.hashSync('admin123', 10);
-
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 // ── MIDDLEWARE ──
 app.use(cors());
 app.use(express.json());
@@ -83,7 +81,7 @@ function auth(req, res, next) {
 // ── AUTH ROUTES ──
 app.post('/api/login', async (req, res) => {
   const { password } = req.body;
-  const ok = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+  const ok = password === ADMIN_PASSWORD;
   if (!ok) return res.status(401).json({ error: 'Невірний пароль' });
   const token = jwt.sign({ admin: true }, JWT_SECRET, { expiresIn: '7d' });
   res.json({ token });
