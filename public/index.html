@@ -349,7 +349,8 @@ function renderNews(list) {
       <div class="news-body">
         <span class="news-cat">Новини</span>
         <div class="news-title">${n.title}</div>
-        <div class="news-text">${n.text}</div>
+        <div class="news-text" style="white-space: pre-line;">${n.text}</div>
+        
         <div class="news-date">${fmtDate(n.date)}</div>
       </div>
     </div>`).join('');
@@ -367,7 +368,8 @@ function renderContests(list) {
       
         <span class="news-cat contest-cat">🏆 Конкурс</span>
         <div class="news-title">${c.title}</div>
-        <div class="news-text">${c.text}</div>
+        <div class="news-text" style="white-space: pre-line;">${c.text}</div>
+        
         ${c.date ? `<div class="news-date">До: ${fmtDate(c.date)}</div>` : ''}
       </div>
     </div>`).join('');
