@@ -408,6 +408,7 @@ let editingVacancyId = null;
 
 async function loadVacancies() {
   const list = await fetch(API + '/api/vacancies').then(r => r.json()).catch(() => []);
+  window.vacancies = list;
   const el = document.getElementById('vacancy-list');
   if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>Вакансій поки немає</div>'; return; }
   el.innerHTML = list.map(v => `
@@ -417,10 +418,11 @@ async function loadVacancies() {
         <div class="item-title">${v.title}</div>
         <div class="item-sub">${v.desc.substring(0,70)}...</div>
       </div>
-      <button class="btn-edit" onclick='editVacancy(${JSON.stringify(v)})'>Редагувати</button>
+      <button class="btn-edit" onclick="editVacancy(vacancies.find(x=>x._id==='${v._id}'))">Редагувати</button>
       <button class="btn-del" onclick="delVacancy('${v._id}')">Видалити</button>
     </div>`).join('');
 }
+
 
 function editVacancy(v) {
   editingVacancyId = v._id;
@@ -446,6 +448,7 @@ let editingPostId = null;
 
 async function loadPosts(type) {
   const list = await fetch(API + '/api/posts?type=' + type).then(r => r.json()).catch(() => []);
+  window.posts = (window.posts || []).filter(p => p.type !== type).concat(list);
   const el = document.getElementById(type === 'news' ? 'news-list' : 'contest-list');
   const label = type === 'news' ? 'новин' : 'конкурсів';
   if (!list.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">${type==='news'?'📰':'🏆'}</div>Поки немає ${label}</div>`; return; }
@@ -456,7 +459,7 @@ async function loadPosts(type) {
         <div class="item-title">${p.title}</div>
         <div class="item-sub">${p.date ? fmtDate(p.date) : ''} ${p.text ? '· '+p.text.substring(0,50)+'...' : ''}</div>
       </div>
-      <button class="btn-edit" onclick='editPost(${JSON.stringify(p)})'>Редагувати</button>
+      <button class="btn-edit" onclick="editPost(posts.find(x=>x._id==='${p._id}'))">Редагувати</button>
       <button class="btn-del" onclick="delPost('${p._id}','${type}')">Видалити</button>
     </div>`).join('');
 }
