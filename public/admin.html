@@ -229,14 +229,10 @@ main{flex:1;padding:32px;max-width:900px}
   <div class="field"><label>Короткий опис (для картки)</label><textarea id="v-desc" placeholder="1-2 речення..."></textarea></div>
   <div class="field"><label>Детальний опис (відкривається при кліку)</label><textarea id="v-details" placeholder="Обов'язки, вимоги, умови праці, зарплата..." style="min-height:120px"></textarea></div>
   <div class="field">
-    <label>Фото вакансії (необов'язково)</label>
-    <div class="photo-upload">
-      <input type="file" accept="image/*" id="v-image" onchange="previewPhoto('v-image','v-preview')">
-      <div class="photo-upload-icon">📷</div>
-      <div class="photo-upload-text">Натисніть або перетягніть фото<br><small>до 5MB</small></div>
-      <img id="v-preview" class="photo-preview">
-    </div>
+  <label>Посилання на фото з Гугл Диску (необов'язково)</label>
+  <input id="v-image" placeholder="Встав посилання на фото тут...">
   </div>
+        
   <button class="btn-submit" onclick="addVacancy()">Додати вакансію</button>
       </div>
       <div class="item-list" id="vacancy-list"></div>
@@ -255,14 +251,10 @@ main{flex:1;padding:32px;max-width:900px}
             <div class="field"><label>Дата публікації</label><input id="n-date" type="date"></div>
           </div>
           <div class="field">
-            <label>Фото (необов'язково)</label>
-            <div class="photo-upload" id="news-drop">
-              <input type="file" accept="image/*" id="n-image" onchange="previewPhoto('n-image','n-preview')">
-              <div class="photo-upload-icon">📷</div>
-              <div class="photo-upload-text">Натисніть або перетягніть фото<br><small>JPG, PNG, WEBP — до 5MB</small></div>
-              <img id="n-preview" class="photo-preview">
-            </div>
+  <label>Посилання на фото з Гугл Диску (необов'язково)</label>
+  <input id="n-image" placeholder="Встав посилання на фото тут...">
           </div>
+          
           <button class="btn-submit" onclick="addPost('news')">Додати новину</button>
         </div>
         <div class="item-list" id="news-list"></div>
@@ -279,14 +271,10 @@ main{flex:1;padding:32px;max-width:900px}
             <div class="field"><label>Дедлайн</label><input id="ct-date" type="date"></div>
           </div>
           <div class="field">
-            <label>Фото (необов'язково)</label>
-            <div class="photo-upload" id="contest-drop">
-              <input type="file" accept="image/*" id="ct-image" onchange="previewPhoto('ct-image','ct-preview')">
-              <div class="photo-upload-icon">🖼️</div>
-              <div class="photo-upload-text">Натисніть або перетягніть фото<br><small>JPG, PNG, WEBP — до 5MB</small></div>
-              <img id="ct-preview" class="photo-preview">
-            </div>
-          </div>
+  <label>Посилання на фото з Гугл Диску (необов'язково)</label>
+  <input id="n-image" placeholder="Встав посилання на фото тут...">
+</div>
+
           <button class="btn-submit" onclick="addPost('contest')">Додати конкурс</button>
         </div>
         <div class="item-list" id="contest-list"></div>
@@ -428,8 +416,8 @@ function editVacancy(v) {
   editingVacancyId = v._id;
   document.getElementById('v-title').value = v.title;
   document.getElementById('v-emoji').value = v.emoji;
-  document.getElementById('v-desc').value = v.desc;
-  document.getElementById('v-details').value = v.details || '';
+    document.getElementById('v-image').value = v.image || '';
+  
   // показати бейдж
   let badge = document.getElementById('editing-badge-v');
   if (!badge) {
@@ -473,7 +461,8 @@ function editPost(p) {
   document.getElementById(isNews ? 'n-title' : 'ct-title').value = p.title;
   document.getElementById(isNews ? 'n-text'  : 'ct-text').value = p.text || '';
   document.getElementById(isNews ? 'n-date'  : 'ct-date').value = p.date || '';
-
+  document.getElementById(isNews ? 'n-image' : 'ct-image').value = p.image || '';
+  
   const badgeId = 'editing-badge-' + tab;
   let badge = document.getElementById(badgeId);
   if (!badge) {
@@ -504,7 +493,8 @@ async function addVacancy() {
   const emoji   = document.getElementById('v-emoji').value.trim() || '💼';
   const desc    = document.getElementById('v-desc').value.trim();
   const details = document.getElementById('v-details').value.trim();
-  const imgEl   = document.getElementById('v-image');
+  const imageLink = document.getElementById('v-image').value.trim();
+  
   if (!title || !desc) return showToast('Заповніть назву і опис', true);
 
   const btn = event.target;
@@ -515,8 +505,8 @@ async function addVacancy() {
     fd.append('emoji', emoji);
     fd.append('desc', desc);
     fd.append('details', details);
-    if (imgEl.files[0]) fd.append('image', imgEl.files[0]);
-
+    if (imageLink) fd.append('image', imageLink);
+    
     const url = editingVacancyId
       ? API + '/api/vacancies/' + editingVacancyId
       : API + '/api/vacancies';
@@ -547,7 +537,8 @@ async function addPost(type) {
   const title  = document.getElementById(isNews ? 'n-title' : 'ct-title').value.trim();
   const text   = document.getElementById(isNews ? 'n-text'  : 'ct-text').value.trim();
   const date   = document.getElementById(isNews ? 'n-date'  : 'ct-date').value;
-  const imgEl  = document.getElementById(isNews ? 'n-image' : 'ct-image');
+  const imageLink = document.getElementById(isNews ? 'n-image' : 'ct-image').value.trim();
+  
   if (!title) return showToast('Введіть заголовок', true);
 
   const btn = event.target;
@@ -558,8 +549,8 @@ async function addPost(type) {
     fd.append('title', title);
     fd.append('text', text);
     fd.append('date', date);
-    if (imgEl.files[0]) fd.append('image', imgEl.files[0]);
-
+    if (imageLink) fd.append('image', imageLink);
+    
     const url = editingPostId
       ? API + '/api/posts/' + editingPostId
       : API + '/api/posts';
