@@ -19,6 +19,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+app.get('/', (req, res) => res.sendFile('index.html', {root: './public'}));
+app.get('/home', (req, res) => res.sendFile('index.html', {root: './public'}));
+app.get('/vacancies', (req, res) => res.sendFile('index.html', {root: './public'}));
+app.get('/news', (req, res) => res.sendFile('index.html', {root: './public'}));
+app.get('/contests', (req, res) => res.sendFile('index.html', {root: './public'}));
+app.get('/contact', (req, res) => res.sendFile('index.html', {root: './public'}));
+
 // Папка для завантажених фото
 const uploadsDir = path.join(__dirname, 'public', 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
