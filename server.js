@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 7860;
 
 // ── CONFIG (замінити перед деплоєм) ──
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://USER:PASS@cluster.mongodb.net/beluco';
+const MONGO_URI = process.env.MONGOURL || process.env.MONGO_URL || process.env.MONGO_URI || '';
 const JWT_SECRET = process.env.JWT_SECRET || 'beluco_secret_key_change_me';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 // ── MIDDLEWARE ──
