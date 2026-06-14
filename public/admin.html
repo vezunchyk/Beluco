@@ -272,8 +272,8 @@ main{flex:1;padding:32px;max-width:900px}
           </div>
           <div class="field">
   <label>Посилання на фото з Гугл Диску (необов'язково)</label>
-  <input id="n-image" placeholder="Встав посилання на фото тут...">
-</div>
+  <input id="ct-image" placeholder="Встав посилання на фото тут...">
+          </div>
 
           <button class="btn-submit" onclick="addPost('contest')">Додати конкурс</button>
         </div>
@@ -456,8 +456,9 @@ function editPost(p) {
   editingPostId = p._id;
   const isNews = p.type === 'news';
   const tab = isNews ? 'news' : 'contests';
-  switchTab(tab, document.querySelector(`.nav-item[onclick*="${tab}"], .mob-tab[onclick*="${tab}"]`));
-
+  const tabBtn = Array.from(document.querySelectorAll('.nav-item, .mob-tab'))
+  .find(b => b.onclick && b.onclick.toString().includes(tab));
+switchTab(tab, tabBtn || document.querySelector('.nav-item'));
   document.getElementById(isNews ? 'n-title' : 'ct-title').value = p.title;
   document.getElementById(isNews ? 'n-text'  : 'ct-text').value = p.text || '';
   document.getElementById(isNews ? 'n-date'  : 'ct-date').value = p.date || '';
