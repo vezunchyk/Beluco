@@ -102,6 +102,20 @@ app.post('/api/vacancies', auth, upload.single('image'), async (req, res) => {
   res.json(v);
 });
 
+app.put('/api/vacancies/:id', auth, upload.single('image'), async (req, res) => {
+  const body = req.body;
+  if (req.file) body.image = '/uploads/' + req.file.filename;
+  const v = await Vacancy.findByIdAndUpdate(req.params.id, body, {new:true});
+  res.json(v);
+});
+
+app.put('/api/posts/:id', auth, upload.single('image'), async (req, res) => {
+  const body = req.body;
+  if (req.file) body.image = '/uploads/' + req.file.filename;
+  const p = await Post.findByIdAndUpdate(req.params.id, body, {new:true});
+  res.json(p);
+});
+
 app.delete('/api/vacancies/:id', auth, async (req, res) => {
   const v = await Vacancy.findByIdAndDelete(req.params.id);
   if (v?.image) {
