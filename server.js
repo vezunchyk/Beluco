@@ -42,9 +42,11 @@ const upload = multer({
 
 // ── MONGOOSE MODELS ──
 const VacancySchema = new mongoose.Schema({
-  emoji: { type: String, default: '💼' },
-  title: { type: String, required: true },
-  desc:  { type: String, required: true },
+  emoji:   { type: String, default: '💼' },
+  title:   { type: String, required: true },
+  desc:    { type: String, required: true },
+  details: { type: String, default: '' },
+  image:   { type: String, default: '' },
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -93,13 +95,19 @@ app.get('/api/vacancies', async (req, res) => {
   res.json(list);
 });
 
-app.post('/api/vacancies', auth, async (req, res) => {
-  const v = await Vacancy.create(req.body);
+app.post('/api/vacancies', auth, upload.single('image'), async (req, res) => {
+  const body = req.body;
+  if (req.file) body.image = '/uploads/' + req.file.filename;
+  const v = await Vacancy.create(body);
   res.json(v);
 });
 
 app.delete('/api/vacancies/:id', auth, async (req, res) => {
-  await Vacancy.findByIdAndDelete(req.params.id);
+  const v = await Vacancy.findByIdAndDelete(req.params.id);
+  if (v?.image) {
+    const fp = path.join(__dirname, 'public', v.image);
+    if (fs.existsSync(fp)) fs.unlinkSync(fp);
+  }
   res.json({ ok: true });
 });
 
