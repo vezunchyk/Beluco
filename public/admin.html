@@ -540,7 +540,6 @@ async function addVacancy() {
 }
 
 async function addPost(type) {
-async function addPost(type) {
   const isNews = type === 'news';
   const title  = document.getElementById(isNews ? 'n-title' : 'ct-title').value.trim();
   const text   = document.getElementById(isNews ? 'n-text'  : 'ct-text').value.trim();
