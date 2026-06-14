@@ -512,7 +512,13 @@ async function addVacancy() {
       : API + '/api/vacancies';
     const method = editingVacancyId ? 'PUT' : 'POST';
 
-    const r = await fetch(url, { method, headers: authHeader(), body: fd });
+    const body = { title, emoji, desc, details };
+if (imageLink) body.image = imageLink;
+const r = await fetch(url, {
+  method,
+  headers: { 'Content-Type': 'application/json', ...authHeader() },
+  body: JSON.stringify(body)
+});
     if (!r.ok) throw new Error();
 
     // скинути форму
@@ -521,8 +527,8 @@ async function addVacancy() {
     document.getElementById('v-emoji').value = '';
     document.getElementById('v-desc').value = '';
     document.getElementById('v-details').value = '';
-    imgEl.value = '';
-    document.getElementById('v-preview').style.display = 'none';
+    // стало:
+document.getElementById('v-image').value = '';
     const badge = document.getElementById('editing-badge-v');
     if (badge) badge.style.display = 'none';
     btn.textContent = 'Додати вакансію';
@@ -556,15 +562,21 @@ async function addPost(type) {
       : API + '/api/posts';
     const method = editingPostId ? 'PUT' : 'POST';
 
-    const r = await fetch(url, { method, headers: authHeader(), body: fd });
+    const body = { type, title, text, date };
+if (imageLink) body.image = imageLink;
+const r = await fetch(url, {
+  method,
+  headers: { 'Content-Type': 'application/json', ...authHeader() },
+  body: JSON.stringify(body)
+});
     if (!r.ok) throw new Error();
 
     editingPostId = null;
     document.getElementById(isNews ? 'n-title' : 'ct-title').value = '';
     document.getElementById(isNews ? 'n-text'  : 'ct-text').value = '';
     document.getElementById(isNews ? 'n-date'  : 'ct-date').value = '';
-    imgEl.value = '';
-    document.getElementById(isNews ? 'n-preview' : 'ct-preview').style.display = 'none';
+    // стало:
+document.getElementById(isNews ? 'n-image' : 'ct-image').value = '';
     const tab = isNews ? 'news' : 'contests';
     const badge = document.getElementById('editing-badge-' + tab);
     if (badge) badge.style.display = 'none';
