@@ -339,7 +339,7 @@ function renderNews(list) {
   el.innerHTML = list.map(n => `
     <div class="news-card">
       ${n.image
-        ? `<img class="news-img" src="${n.image}" alt="${n.title}">`
+        ? `<img class="news-img" src="${API + n.image}" alt="${n.title}">`
         : `<div class="news-img-placeholder">📰</div>`}
       <div class="news-body">
         <span class="news-cat">Новини</span>
@@ -356,9 +356,10 @@ function renderContests(list) {
   el.innerHTML = list.map(c => `
     <div class="news-card">
       ${c.image
-        ? `<img class="news-img" src="${c.image}" alt="${c.title}">`
+        ? `<img class="news-img" src="${API + c.image}" alt="${c.title}">`
         : `<div class="news-img-placeholder">🏆</div>`}
       <div class="news-body">
+      
         <span class="news-cat contest-cat">🏆 Конкурс</span>
         <div class="news-title">${c.title}</div>
         <div class="news-text">${c.text}</div>
