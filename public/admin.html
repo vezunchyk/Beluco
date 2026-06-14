@@ -112,6 +112,17 @@ main{flex:1;padding:32px;max-width:900px}
 .btn-submit:hover{background:var(--gd)}
 .btn-submit:disabled{opacity:.5;cursor:not-allowed}
 
+  .btn-edit{
+  background:none;border:1.5px solid var(--border);color:var(--mid);
+  padding:6px 14px;font-size:13px;border-radius:var(--r-sm);cursor:pointer;
+  transition:all .15s;flex-shrink:0;margin-right:6px;
+}
+.btn-edit:hover{background:var(--g);border-color:var(--g);color:#fff}
+.editing-badge{
+  display:inline-block;background:#fff3cd;color:#856404;
+  font-size:12px;font-weight:600;padding:4px 12px;border-radius:50px;
+  margin-bottom:16px;
+}
 /* ── ITEM LIST ── */
 .item-list{display:flex;flex-direction:column;gap:10px}
 .item-card{
@@ -391,6 +402,8 @@ async function loadAll() {
   await Promise.all([loadVacancies(), loadPosts('news'), loadPosts('contest'), loadSettings()]);
 }
 
+let editingVacancyId = null;
+
 async function loadVacancies() {
   const list = await fetch(API + '/api/vacancies').then(r => r.json()).catch(() => []);
   const el = document.getElementById('vacancy-list');
@@ -402,9 +415,32 @@ async function loadVacancies() {
         <div class="item-title">${v.title}</div>
         <div class="item-sub">${v.desc.substring(0,70)}...</div>
       </div>
+      <button class="btn-edit" onclick='editVacancy(${JSON.stringify(v)})'>Редагувати</button>
       <button class="btn-del" onclick="delVacancy('${v._id}')">Видалити</button>
     </div>`).join('');
 }
+
+function editVacancy(v) {
+  editingVacancyId = v._id;
+  document.getElementById('v-title').value = v.title;
+  document.getElementById('v-emoji').value = v.emoji;
+  document.getElementById('v-desc').value = v.desc;
+  document.getElementById('v-details').value = v.details || '';
+  // показати бейдж
+  let badge = document.getElementById('editing-badge-v');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'editing-badge-v';
+    badge.className = 'editing-badge';
+    document.querySelector('#tab-vacancies .form-card h3').after(badge);
+  }
+  badge.textContent = '✏️ Режим редагування: ' + v.title;
+  badge.style.display = 'block';
+  document.querySelector('#tab-vacancies .btn-submit').textContent = 'Зберегти зміни';
+  window.scrollTo(0,0);
+}
+
+let editingPostId = null;
 
 async function loadPosts(type) {
   const list = await fetch(API + '/api/posts?type=' + type).then(r => r.json()).catch(() => []);
@@ -413,15 +449,38 @@ async function loadPosts(type) {
   if (!list.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">${type==='news'?'📰':'🏆'}</div>Поки немає ${label}</div>`; return; }
   el.innerHTML = list.map(p => `
     <div class="item-card">
-      <div class="item-thumb">
-        ${p.image ? `<img src="${p.image}" alt="">` : (type==='news'?'📰':'🏆')}
-      </div>
+      <div class="item-thumb">${p.image ? `<img src="${p.image}" alt="">` : (type==='news'?'📰':'🏆')}</div>
       <div class="item-info">
         <div class="item-title">${p.title}</div>
         <div class="item-sub">${p.date ? fmtDate(p.date) : ''} ${p.text ? '· '+p.text.substring(0,50)+'...' : ''}</div>
       </div>
+      <button class="btn-edit" onclick='editPost(${JSON.stringify(p)})'>Редагувати</button>
       <button class="btn-del" onclick="delPost('${p._id}','${type}')">Видалити</button>
     </div>`).join('');
+}
+
+function editPost(p) {
+  editingPostId = p._id;
+  const isNews = p.type === 'news';
+  const tab = isNews ? 'news' : 'contests';
+  switchTab(tab, document.querySelector(`.nav-item[onclick*="${tab}"], .mob-tab[onclick*="${tab}"]`));
+
+  document.getElementById(isNews ? 'n-title' : 'ct-title').value = p.title;
+  document.getElementById(isNews ? 'n-text'  : 'ct-text').value = p.text || '';
+  document.getElementById(isNews ? 'n-date'  : 'ct-date').value = p.date || '';
+
+  const badgeId = 'editing-badge-' + tab;
+  let badge = document.getElementById(badgeId);
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = badgeId;
+    badge.className = 'editing-badge';
+    document.querySelector('#tab-' + tab + ' .form-card h3').after(badge);
+  }
+  badge.textContent = '✏️ Режим редагування: ' + p.title;
+  badge.style.display = 'block';
+  document.querySelector('#tab-' + tab + ' .btn-submit').textContent = 'Зберегти зміни';
+  window.scrollTo(0,0);
 }
 
 async function loadSettings() {
@@ -453,24 +512,32 @@ async function addVacancy() {
     fd.append('details', details);
     if (imgEl.files[0]) fd.append('image', imgEl.files[0]);
 
-    const r = await fetch(API + '/api/vacancies', {
-      method: 'POST',
-      headers: authHeader(),
-      body: fd
-    });
+    const url = editingVacancyId
+      ? API + '/api/vacancies/' + editingVacancyId
+      : API + '/api/vacancies';
+    const method = editingVacancyId ? 'PUT' : 'POST';
+
+    const r = await fetch(url, { method, headers: authHeader(), body: fd });
     if (!r.ok) throw new Error();
+
+    // скинути форму
+    editingVacancyId = null;
     document.getElementById('v-title').value = '';
     document.getElementById('v-emoji').value = '';
     document.getElementById('v-desc').value = '';
     document.getElementById('v-details').value = '';
     imgEl.value = '';
     document.getElementById('v-preview').style.display = 'none';
+    const badge = document.getElementById('editing-badge-v');
+    if (badge) badge.style.display = 'none';
+    btn.textContent = 'Додати вакансію';
     await loadVacancies();
-    showToast('✓ Вакансію додано');
+    showToast('✓ Збережено');
   } catch { showToast('Помилка збереження', true); }
   btn.disabled = false;
 }
 
+async function addPost(type) {
 async function addPost(type) {
   const isNews = type === 'news';
   const title  = document.getElementById(isNews ? 'n-title' : 'ct-title').value.trim();
@@ -489,21 +556,26 @@ async function addPost(type) {
     fd.append('date', date);
     if (imgEl.files[0]) fd.append('image', imgEl.files[0]);
 
-    const r = await fetch(API + '/api/posts', {
-      method: 'POST',
-      headers: authHeader(),
-      body: fd
-    });
+    const url = editingPostId
+      ? API + '/api/posts/' + editingPostId
+      : API + '/api/posts';
+    const method = editingPostId ? 'PUT' : 'POST';
+
+    const r = await fetch(url, { method, headers: authHeader(), body: fd });
     if (!r.ok) throw new Error();
 
-    // clear form
+    editingPostId = null;
     document.getElementById(isNews ? 'n-title' : 'ct-title').value = '';
     document.getElementById(isNews ? 'n-text'  : 'ct-text').value = '';
     document.getElementById(isNews ? 'n-date'  : 'ct-date').value = '';
     imgEl.value = '';
     document.getElementById(isNews ? 'n-preview' : 'ct-preview').style.display = 'none';
+    const tab = isNews ? 'news' : 'contests';
+    const badge = document.getElementById('editing-badge-' + tab);
+    if (badge) badge.style.display = 'none';
+    btn.textContent = isNews ? 'Додати новину' : 'Додати конкурс';
     await loadPosts(type);
-    showToast('✓ ' + (isNews ? 'Новину' : 'Конкурс') + ' додано');
+    showToast('✓ Збережено');
   } catch { showToast('Помилка збереження', true); }
   btn.disabled = false;
 }
