@@ -500,12 +500,6 @@ async function addVacancy() {
   const btn = event.target;
   btn.disabled = true;
   try {
-    const fd = new FormData();
-    fd.append('title', title);
-    fd.append('emoji', emoji);
-    fd.append('desc', desc);
-    fd.append('details', details);
-    if (imageLink) fd.append('image', imageLink);
     
     const url = editingVacancyId
       ? API + '/api/vacancies/' + editingVacancyId
@@ -550,12 +544,6 @@ async function addPost(type) {
   const btn = event.target;
   btn.disabled = true;
   try {
-    const fd = new FormData();
-    fd.append('type', type);
-    fd.append('title', title);
-    fd.append('text', text);
-    fd.append('date', date);
-    if (imageLink) fd.append('image', imageLink);
     
     const url = editingPostId
       ? API + '/api/posts/' + editingPostId
