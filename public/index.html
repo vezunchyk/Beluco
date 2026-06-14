@@ -397,6 +397,8 @@ function showPage(name, link) {
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
   if (link) link.classList.add('active');
   window.scrollTo(0, 0);
+  const slug = name === 'home' ? '/' : '/' + name;
+  history.pushState({page: name}, '', slug);
 }
 function toggleMobile() {
   document.getElementById('mobileMenu').classList.toggle('open');
@@ -421,7 +423,16 @@ const DEMO = {
   contests: [{title:'Кращий майстер місяця',text:'Щомісяця обираємо найкращого працівника цеху.',date:'2025-06-30',image:''}],
   settings: {phone:'+38 (000) 000-00-00',email:'hr@beluco.ua',address:'Вкажіть адресу',hours:'Пн–Пт 09:00–17:00',years:'10+',staff:'100+'}
 };
+// Відкрити потрібну сторінку при прямому переході
+const startPath = window.location.pathname.replace('/', '').toLowerCase() || 'home';
+const validPages = ['home', 'vacancies', 'news', 'contests', 'contact'];
+const startPage = validPages.includes(startPath) ? startPath : 'home';
+showPage(startPage, document.querySelector(`.nav-links a[onclick*="${startPage}"]`));
 
+// Кнопка назад/вперед в браузері
+window.addEventListener('popstate', (e) => {
+  if (e.state?.page) showPage(e.state.page, null);
+});
 loadAll();
 </script>
   <div class="modal-overlay" id="modal" onclick="closeModal(event)">
