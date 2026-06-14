@@ -208,18 +208,24 @@ main{flex:1;padding:32px;max-width:900px}
 
     <main>
       <!-- VACANCIES -->
-      <div class="tab-content active" id="tab-vacancies">
-        <div class="tab-title">💼 Вакансії</div>
-        <div class="form-card">
-          <h3>+ Додати вакансію</h3>
-          <div class="field-row">
-            <div class="field"><label>Назва посади</label><input id="v-title" placeholder="напр. Швачка"></div>
-            <div class="field"><label>Іконка (emoji)</label><input id="v-emoji" placeholder="🧵" style="width:80px"></div>
-          </div>
-          <div class="field"><label>Опис</label><textarea id="v-desc" placeholder="Що потрібно робити, які вимоги..."></textarea></div>
-          <button class="btn-submit" onclick="addVacancy()">Додати вакансію</button>
-        </div>
-        <div class="item-list" id="vacancy-list"></div>
+      <div class="form-card">
+  <h3>+ Додати вакансію</h3>
+  <div class="field-row">
+    <div class="field"><label>Назва посади</label><input id="v-title" placeholder="напр. Швачка"></div>
+    <div class="field"><label>Іконка (emoji)</label><input id="v-emoji" placeholder="🧵" style="width:80px"></div>
+  </div>
+  <div class="field"><label>Короткий опис (для картки)</label><textarea id="v-desc" placeholder="1-2 речення..."></textarea></div>
+  <div class="field"><label>Детальний опис (відкривається при кліку)</label><textarea id="v-details" placeholder="Обов'язки, вимоги, умови праці, зарплата..." style="min-height:120px"></textarea></div>
+  <div class="field">
+    <label>Фото вакансії (необов'язково)</label>
+    <div class="photo-upload">
+      <input type="file" accept="image/*" id="v-image" onchange="previewPhoto('v-image','v-preview')">
+      <div class="photo-upload-icon">📷</div>
+      <div class="photo-upload-text">Натисніть або перетягніть фото<br><small>до 5MB</small></div>
+      <img id="v-preview" class="photo-preview">
+    </div>
+  </div>
+  <button class="btn-submit" onclick="addVacancy()">Додати вакансію</button>
       </div>
 
       <!-- NEWS -->
@@ -425,23 +431,35 @@ async function loadSettings() {
 
 // ── ACTIONS ──
 async function addVacancy() {
-  const title = document.getElementById('v-title').value.trim();
-  const emoji = document.getElementById('v-emoji').value.trim() || '💼';
-  const desc  = document.getElementById('v-desc').value.trim();
+  const title   = document.getElementById('v-title').value.trim();
+  const emoji   = document.getElementById('v-emoji').value.trim() || '💼';
+  const desc    = document.getElementById('v-desc').value.trim();
+  const details = document.getElementById('v-details').value.trim();
+  const imgEl   = document.getElementById('v-image');
   if (!title || !desc) return showToast('Заповніть назву і опис', true);
 
   const btn = event.target;
   btn.disabled = true;
   try {
+    const fd = new FormData();
+    fd.append('title', title);
+    fd.append('emoji', emoji);
+    fd.append('desc', desc);
+    fd.append('details', details);
+    if (imgEl.files[0]) fd.append('image', imgEl.files[0]);
+
     const r = await fetch(API + '/api/vacancies', {
       method: 'POST',
-      headers: {'Content-Type':'application/json', ...authHeader()},
-      body: JSON.stringify({title, emoji, desc})
+      headers: authHeader(),
+      body: fd
     });
     if (!r.ok) throw new Error();
     document.getElementById('v-title').value = '';
     document.getElementById('v-emoji').value = '';
     document.getElementById('v-desc').value = '';
+    document.getElementById('v-details').value = '';
+    imgEl.value = '';
+    document.getElementById('v-preview').style.display = 'none';
     await loadVacancies();
     showToast('✓ Вакансію додано');
   } catch { showToast('Помилка збереження', true); }
